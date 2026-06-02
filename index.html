@@ -67,7 +67,21 @@
   .lang-select:focus { outline: none; border-color: var(--accent); }
 
   .layout { display: grid; grid-template-columns: minmax(280px, 420px) 1fr; gap: 24px; align-items: start; }
-  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } .stage { order: -1; } }
+  @media (max-width: 860px) {
+    .wrap { padding: 14px 14px 56px; }
+    .layout { grid-template-columns: 1fr; }
+    /* Docked split view: preview pinned to the top, cards scroll below it.
+       Opaque full-width background hides cards scrolling underneath. */
+    .stage {
+      order: -1;
+      position: sticky; top: 0; z-index: 5;
+      background: var(--bg);
+      margin: 0 -14px;
+      padding: 6px 14px 10px;
+      border-bottom: 1px solid var(--line);
+      gap: 6px;
+    }
+  }
 
   /* Stage / preview */
   .stage {
@@ -79,8 +93,9 @@
     border-radius: 22px; padding: 8px; border: 1px solid var(--line);
     box-shadow: 0 12px 40px rgba(0,0,0,0.35);
     line-height: 0;
+    max-width: 100%; box-sizing: border-box;
   }
-  #preview { border-radius: 16px; display: block; cursor: grab; touch-action: none; max-width: 100%; }
+  #preview { border-radius: 16px; display: block; cursor: grab; touch-action: none; max-width: 100%; height: auto; }
   #preview.dragging { cursor: grabbing; }
   .stage .hint { color: var(--muted); font-size: 12px; text-align: center; }
   .stage .dims { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
@@ -3240,7 +3255,15 @@ window.qrcode = qrcode;
   }
   function render() {
     var W = state.format.w, H = state.format.h;
-    var ph = Math.min(PREVIEW_MAX_H, Math.round(window.innerHeight * 0.78));
+    // Fit the preview within BOTH the available height and width. On mobile the
+    // preview is docked to ~half the screen, so cap height lower there.
+    var mobile = window.matchMedia("(max-width: 860px)").matches;
+    var vh = window.innerHeight || 800;
+    var maxH = Math.min(PREVIEW_MAX_H, Math.round(vh * (mobile ? 0.46 : 0.78)));
+    var stage = canvas.closest(".stage");
+    var availW = (stage && stage.clientWidth) ? stage.clientWidth : window.innerWidth;
+    var maxW = Math.max(120, Math.round(availW * (mobile ? 0.94 : 1)));
+    var ph = Math.min(maxH, Math.floor(maxW * H / W));
     var pw = Math.round(ph * (W / H));
     if (canvas.width !== pw || canvas.height !== ph) {
       canvas.width = pw; canvas.height = ph;

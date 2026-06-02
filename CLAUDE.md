@@ -116,9 +116,20 @@ the photo.
   Nunito, Oswald, Bebas Neue, Playfair Display) only loads when online; offline, those
   dropdown entries fall back to their generic stacks and the rest of the tool (including QR)
   still works. `document.fonts.ready` triggers a re-render once fonts arrive.
-- **Preview vs export size**: the preview canvas is sized to fit the viewport
-  (`PREVIEW_MAX_H`), the export canvas to `state.format.{w,h}`. Never assume preview pixels
-  equal export pixels — always go through normalized coords.
+- **Preview vs export size**: the preview canvas is sized to fit the viewport, the export
+  canvas to `state.format.{w,h}`. Never assume preview pixels equal export pixels — always go
+  through normalized coords. `render()` fits within **both** width and height: `maxH` =
+  `min(PREVIEW_MAX_H, innerHeight * (mobile ? 0.46 : 0.78))`, `maxW` from the `.stage`
+  clientWidth, then `ph = min(maxH, floor(maxW*H/W))`. Re-runs on the `resize` listener (so
+  it tracks iOS Chrome's toolbar show/hide and rotation).
+- **Responsive layout / mobile docked preview**: desktop is a two-column grid with the
+  preview `position: sticky; top:16px` in its own column. The `@media (max-width:860px)`
+  block collapses to one column and turns `.stage` into a **docked split view** — `position:
+  sticky; top:0; z-index:5`, opaque full-width background (negative `margin` bleeds past
+  `.wrap` padding), bottom divider — so the option cards scroll *under* it with no overlap.
+  The earlier bug was leaving sticky on in one column with a ~78vh, transparent-sided preview
+  that covered the cards. If you touch `.stage`/`render()`, keep the preview opaque and
+  height-capped on mobile.
 - **`setPointerCapture` can throw** (seen in some browsers, e.g. Firefox). `pointerdown`
   registers the pointer in the `pointers` Map *before* calling it, and the call is wrapped
   in `try/catch` — otherwise a throw aborts `dragMode` setup and dragging silently dies
@@ -164,6 +175,9 @@ languages and confirm headings, placeholders, optgroup labels, the canvas text, 
 messages all switch (and that a customized contact heading is preserved). For the
 collapsible cards, check a fresh desktop viewport (all expanded) vs a fresh mobile viewport
 ≤860px (all collapsed), that toggling one section is independent, and that the choice
-survives a reload. Note: a Playwright `addInitScript` that clears `localStorage` re-runs on
+survives a reload. For the mobile docked preview, use a phone viewport (e.g. 393×852,
+`isMobile`/`hasTouch`) and confirm the preview height ≤ ~55vh, `.stage` is `position:sticky`,
+and a card header below the dock still toggles when tapped (not covered) — plus a desktop
+viewport still shows the two-column sticky-at-16px layout. Note: a Playwright `addInitScript` that clears `localStorage` re-runs on
 every navigation — clear once (e.g. behind a `sessionStorage` sentinel) or persistence
 checks will look broken.
