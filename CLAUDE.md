@@ -17,8 +17,11 @@ one file. Nothing is uploaded anywhere; all processing is client-side in `<canva
 
 - `index.html` — the entire app:
   - `:root` / `[data-theme="light"]` — CSS variables for dark/light themes.
-  - Static HTML: header → controls column (7 cards: Image, Screen size, Text,
+  - Static HTML: header → controls column (7 collapsible cards: Image, Screen size, Text,
     Text style, Text box, QR code, Export) → sticky preview "stage" with the `<canvas>`.
+    Each card is `<div class="card" data-card="…">` → `<h2><button class="card-toggle"
+    aria-expanded aria-controls="body-…"><span class="card-title" data-i18n>…</span>
+    <span class="chevron"></span></button></h2>` → `<div class="card-body" id="body-…">`.
   - **First `<script>`** — the bundled QR encoder (qrcode-generator v1.4.4, Kazuhiko
     Arase, MIT). Inlined verbatim and exposed as `window.qrcode`. Don't hand-edit it; to
     update, re-fetch the upstream file and re-splice (see "QR encoder" below).
@@ -27,7 +30,8 @@ one file. Nothing is uploaded anywhere; all processing is client-side in `<canva
     `LANG_META`, the `state` object + `defaults`, `loadState`/`saveState` (localStorage),
     text model (`textLines`, `buildVCard`, `getQrModel`), image transform
     (`baseScale`/`clampView`/`imageRect`), the shared `draw(ctx, W, H)`, `formatName`,
-    pointer/wheel/pinch handlers, control wiring, `applyBoxTheme`, theme + language
+    pointer/wheel/pinch handlers, control wiring, `applyBoxTheme`, collapsible cards
+    (`setCardCollapsed`/`initCards` + delegated `.controls` click), theme + language
     (`setTheme`, `tr`/`applyLang`/`detectLang`), `doExport`, `initUI`.
 - `README.md` — end-user usage.
 
@@ -88,7 +92,14 @@ the photo.
   from `navigator.language` (Norwegian variants → `nb`), else English. The default contact
   heading auto-migrates between languages **unless** the user customized it (checked against
   every language's `default_prefix`).
-- **Persistence**: `localStorage` keys `lockscreen-state-v1` (settings, debounced 250 ms),
+- **Collapsible cards**: each card header is a real `<button>` (keyboard + touch native).
+  A delegated click handler on `.controls` (matches `closest('.card-toggle')`) flips the
+  card's `.collapsed` class via `setCardCollapsed`, writes `state.collapsed[id]`, and saves.
+  `initCards()` (in `initUI`) seeds state: a card with an explicit saved entry uses it;
+  otherwise it follows the responsive default — collapsed when `matchMedia('(max-width:
+  860px)')` matches (mobile), expanded on desktop. Evaluated once at load, not on resize.
+- **Persistence**: `localStorage` keys `lockscreen-state-v1` (settings incl. `collapsed`,
+  debounced 250 ms),
   `lockscreen-theme`, and `lockscreen-lang`. Reads/writes are wrapped in try/catch for
   private-mode browsers. Bump the `-v1` suffix if the state shape changes incompatibly.
 
@@ -135,6 +146,10 @@ the photo.
   label), store its value normalized on `state`, wire an `input`/`change` listener that
   updates state + `render()` + `saveState()`, render it inside `draw`, and set its initial
   value in `initUI`.
+- **Add a control card**: copy the card skeleton (`<div class="card" data-card="newid">` →
+  `<h2><button class="card-toggle" aria-expanded="true" aria-controls="body-newid">…
+  <span class="chevron">` → `<div class="card-body" id="body-newid">`). The delegated handler
+  and `initCards` pick it up automatically via `[data-card]`; no other wiring needed.
 
 ## Verify after changes
 
@@ -146,4 +161,9 @@ image, fills contact fields, zooms, enables QR, switches format, exports PNG+JPE
 the PNG IHDR dimensions and localStorage) — replicate that flow when touching `draw`,
 export, or the QR path. When touching i18n, also switch the language dropdown through all four
 languages and confirm headings, placeholders, optgroup labels, the canvas text, and export
-messages all switch (and that a customized contact heading is preserved).
+messages all switch (and that a customized contact heading is preserved). For the
+collapsible cards, check a fresh desktop viewport (all expanded) vs a fresh mobile viewport
+≤860px (all collapsed), that toggling one section is independent, and that the choice
+survives a reload. Note: a Playwright `addInitScript` that clears `localStorage` re-runs on
+every navigation — clear once (e.g. behind a `sessionStorage` sentinel) or persistence
+checks will look broken.

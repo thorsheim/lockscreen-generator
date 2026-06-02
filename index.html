@@ -88,7 +88,22 @@
   /* Controls */
   .controls { display: flex; flex-direction: column; gap: 14px; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
-  .card h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 12px; font-weight: 700; }
+  .card h2 { margin: 0; font-size: inherit; font-weight: inherit; }
+  .card-toggle {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    background: none; border: 0; padding: 0; margin: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: left;
+  }
+  .card-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .card-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+  .chevron {
+    margin-left: auto; flex: none; width: 8px; height: 8px;
+    border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg); transition: transform 0.15s ease;
+  }
+  .card-body { margin-top: 12px; }
+  .card.collapsed .card-body { display: none; }
+  .card.collapsed .chevron { transform: rotate(-45deg); }
   .row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .row:last-child { margin-bottom: 0; }
   .row label { font-size: 13px; color: var(--text); min-width: 78px; }
@@ -158,8 +173,11 @@
   <div class="layout">
     <!-- Controls -->
     <div class="controls">
-      <div class="card">
-        <h2 data-i18n="h_image">1 · Image</h2>
+      <div class="card" data-card="image">
+        <h2><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-image">
+          <span class="card-title" data-i18n="h_image">1 · Image</span><span class="chevron" aria-hidden="true"></span>
+        </button></h2>
+        <div class="card-body" id="body-image">
         <div class="dropzone" id="dropzone">
           <strong data-i18n="dz_click">Click to upload</strong> <span data-i18n="dz_rest">or drop an image here</span>
         </div>
@@ -178,10 +196,14 @@
           <input type="color" id="bgColor" value="#000000">
           <span class="muted-note" style="margin:0;" data-i18n="note_backdrop">Shows where the photo doesn't cover.</span>
         </div>
+        </div>
       </div>
 
-      <div class="card">
-        <h2 data-i18n="h_screen">2 · Screen size</h2>
+      <div class="card" data-card="screen">
+        <h2><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-screen">
+          <span class="card-title" data-i18n="h_screen">2 · Screen size</span><span class="chevron" aria-hidden="true"></span>
+        </button></h2>
+        <div class="card-body" id="body-screen">
         <div class="row">
           <label for="format" data-i18n="lbl_device">Device</label>
           <select id="format" class="grow">
@@ -213,10 +235,14 @@
           <span class="val">×</span>
           <input type="number" id="customH" min="100" max="8000" step="1" placeholder="height" data-i18n-ph="ph_height" class="grow">
         </div>
+        </div>
       </div>
 
-      <div class="card">
-        <h2 data-i18n="h_text">3 · Text</h2>
+      <div class="card" data-card="text">
+        <h2><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-text">
+          <span class="card-title" data-i18n="h_text">3 · Text</span><span class="chevron" aria-hidden="true"></span>
+        </button></h2>
+        <div class="card-body" id="body-text">
         <div class="row">
           <label data-i18n="lbl_content">Content</label>
           <div class="btn-group" id="modeGroup">
@@ -236,10 +262,14 @@
         <div id="freeField" class="hidden">
           <textarea id="freeText" placeholder="Type anything — line breaks are kept." data-i18n-ph="ph_free"></textarea>
         </div>
+        </div>
       </div>
 
-      <div class="card">
-        <h2 data-i18n="h_style">4 · Text style</h2>
+      <div class="card" data-card="style">
+        <h2><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-style">
+          <span class="card-title" data-i18n="h_style">4 · Text style</span><span class="chevron" aria-hidden="true"></span>
+        </button></h2>
+        <div class="card-body" id="body-style">
         <div class="row">
           <label for="font" data-i18n="lbl_font">Font</label>
           <select id="font" class="grow"></select>
@@ -268,10 +298,14 @@
           <label class="check"><input type="checkbox" id="bold"> <span data-i18n="chk_bold">Bold</span></label>
           <label class="check"><input type="checkbox" id="shadow" checked> <span data-i18n="chk_shadow">Drop shadow</span></label>
         </div>
+        </div>
       </div>
 
-      <div class="card">
-        <h2 data-i18n="h_box">5 · Text box</h2>
+      <div class="card" data-card="box">
+        <h2><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-box">
+          <span class="card-title" data-i18n="h_box">5 · Text box</span><span class="chevron" aria-hidden="true"></span>
+        </button></h2>
+        <div class="card-body" id="body-box">
         <label class="check" style="margin-bottom:12px;"><input type="checkbox" id="boxEnabled" checked> <span data-i18n="chk_box">Show background box behind text</span></label>
         <div class="row">
           <label data-i18n="lbl_themes">Themes</label>
@@ -301,10 +335,14 @@
           </div>
         </div>
         <p class="muted-note" data-i18n="note_drag">Tip: drag the box (or the QR code) directly on the preview to place it anywhere.</p>
+        </div>
       </div>
 
-      <div class="card">
-        <h2><span data-i18n="h_qr">6 · QR code</span> <span style="text-transform:none;font-weight:400;color:var(--muted);" data-i18n="qr_optional">(optional)</span></h2>
+      <div class="card" data-card="qr">
+        <h2><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-qr">
+          <span class="card-title" data-i18n="h_qr">6 · QR code</span> <span style="text-transform:none;font-weight:400;color:var(--muted);" data-i18n="qr_optional">(optional)</span><span class="chevron" aria-hidden="true"></span>
+        </button></h2>
+        <div class="card-body" id="body-qr">
         <label class="check" style="margin-bottom:12px;"><input type="checkbox" id="qrEnabled"> <span data-i18n="chk_qr">Add a scannable QR code</span></label>
         <div id="qrControls" class="hidden">
           <div class="row">
@@ -328,10 +366,14 @@
           </div>
           <div class="msg" id="qrMsg"></div>
         </div>
+        </div>
       </div>
 
-      <div class="card">
-        <h2 data-i18n="h_export">7 · Export</h2>
+      <div class="card" data-card="export">
+        <h2><button type="button" class="card-toggle" aria-expanded="true" aria-controls="body-export">
+          <span class="card-title" data-i18n="h_export">7 · Export</span><span class="chevron" aria-hidden="true"></span>
+        </button></h2>
+        <div class="card-body" id="body-export">
         <div class="row">
           <label data-i18n="lbl_format">Format</label>
           <div class="btn-group" id="fmtGroup">
@@ -346,6 +388,7 @@
         </div>
         <button class="btn accent wide" id="downloadBtn" type="button" data-i18n="btn_download">Download lockscreen</button>
         <div class="msg" id="exportMsg"></div>
+        </div>
       </div>
     </div>
 
@@ -2848,7 +2891,8 @@ window.qrcode = qrcode;
     qr: { enabled: false, mode: "vcard", text: "", cx: 0.5, cy: 0.12, sizeRel: 0.2, fg: "#000000", bg: "#ffffff" },
     layout: "bottom",
     exportFmt: "png",
-    quality: 0.92
+    quality: 0.92,
+    collapsed: {} // per-card collapse state, keyed by data-card id
   };
   var state = loadState();
 
@@ -3559,6 +3603,33 @@ window.qrcode = qrcode;
     saveState();
   });
 
+  // ---- Collapsible cards --------------------------------------------------
+  function setCardCollapsed(card, collapsed) {
+    card.classList.toggle("collapsed", collapsed);
+    var btn = card.querySelector(".card-toggle");
+    if (btn) btn.setAttribute("aria-expanded", String(!collapsed));
+  }
+  function initCards() {
+    // Fresh sessions: collapsed on mobile, expanded on desktop. A card that the
+    // user has explicitly toggled keeps its saved choice on any screen size.
+    var mobile = window.matchMedia("(max-width: 860px)").matches;
+    document.querySelectorAll(".card[data-card]").forEach(function (card) {
+      var id = card.getAttribute("data-card");
+      var collapsed = (state.collapsed && id in state.collapsed) ? state.collapsed[id] : mobile;
+      setCardCollapsed(card, collapsed);
+    });
+  }
+  document.querySelector(".controls").addEventListener("click", function (e) {
+    var btn = e.target.closest(".card-toggle");
+    if (!btn) return;
+    var card = btn.closest(".card");
+    var id = card.getAttribute("data-card");
+    var collapsed = !card.classList.contains("collapsed");
+    setCardCollapsed(card, collapsed);
+    state.collapsed[id] = collapsed;
+    saveState();
+  });
+
   // ---- Init UI from state -------------------------------------------------
   function initUI() {
     currentLang = detectLang();
@@ -3622,6 +3693,7 @@ window.qrcode = qrcode;
     $("quality").value = state.quality;
     $("qualityVal").textContent = Math.round(state.quality * 100) + "%";
 
+    initCards();
     applyLang(currentLang); // translates the UI and renders
   }
 
