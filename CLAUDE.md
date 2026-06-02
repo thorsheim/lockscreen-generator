@@ -78,7 +78,9 @@ the photo.
 - **Export**: PNG (lossless) or JPEG (quality slider). Filename is
   `lockscreen-<W>x<H>.<ext>`. Object URL is revoked after the click.
 - **Internationalization**: English, Norwegian Bokmål (`nb`), French (`fr`), Spanish (`es`).
-  The header language button cycles through `LANG_ORDER`. `applyLang(lang)` rewrites every
+  The header is a `<select id="langSelect">` (options built in JS from `LANG_ORDER` /
+  `LANG_META`, each showing flag + native name). Its `change` handler calls `applyLang`.
+  `applyLang(lang)` rewrites every
   element carrying `data-i18n` (textContent), `data-i18n-ph` (placeholder), or
   `data-i18n-label` (optgroup `.label`), then re-renders so canvas/JS strings update too.
   JS-generated strings go through `tr(key)` (canvas "upload" prompt, QR placeholder text,
@@ -127,8 +129,8 @@ the photo.
   built in JS, fetch it via `tr("key")` instead of hardcoding. Keep English (`en`) complete
   — `tr` falls back to it for any missing key.
 - **Add a language**: add a full object to `I18N` (copy `en` and translate every key), add
-  its code to `LANG_ORDER`, and a `{ flag, code }` entry to `LANG_META`. `detectLang` and
-  the cycle button pick it up automatically.
+  its code to `LANG_ORDER`, and a `{ flag, code, name }` entry to `LANG_META`. `detectLang`
+  and the language dropdown pick it up automatically.
 - **Add a new styling control**: add the input to the relevant card (with `data-i18n` on its
   label), store its value normalized on `state`, wire an `input`/`change` listener that
   updates state + `render()` + `saveState()`, render it inside `draw`, and set its initial
@@ -142,6 +144,6 @@ confirm the file dimensions equal the selected device resolution and the image m
 preview. A headless Playwright smoke test was used during initial development (uploads an
 image, fills contact fields, zooms, enables QR, switches format, exports PNG+JPEG, checks
 the PNG IHDR dimensions and localStorage) — replicate that flow when touching `draw`,
-export, or the QR path. When touching i18n, also cycle the language button through all four
+export, or the QR path. When touching i18n, also switch the language dropdown through all four
 languages and confirm headings, placeholders, optgroup labels, the canvas text, and export
 messages all switch (and that a customized contact heading is preserved).

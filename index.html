@@ -58,6 +58,13 @@
     border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 13px;
   }
   .theme-btn:hover { border-color: var(--accent); }
+  .lang-select {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--line);
+    border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 13px;
+    font-family: inherit; width: auto;
+  }
+  .lang-select:hover { border-color: var(--accent); }
+  .lang-select:focus { outline: none; border-color: var(--accent); }
 
   .layout { display: grid; grid-template-columns: minmax(280px, 420px) 1fr; gap: 24px; align-items: start; }
   @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } .stage { order: -1; } }
@@ -143,7 +150,7 @@
       <p data-i18n="subtitle">Crop a photo to your phone screen and add your contact details — so a lost phone can find its way home.</p>
     </div>
     <div class="hstack">
-      <button class="theme-btn" id="langBtn" type="button" title="Language">🇬🇧 EN</button>
+      <select class="lang-select" id="langSelect" title="Language" aria-label="Language"></select>
       <button class="theme-btn" id="themeBtn" type="button">Light mode</button>
     </div>
   </header>
@@ -2807,8 +2814,10 @@ window.qrcode = qrcode;
   };
   var LANG_ORDER = ["en", "nb", "fr", "es"];
   var LANG_META = {
-    en: { flag: "🇬🇧", code: "EN" }, nb: { flag: "🇳🇴", code: "NO" },
-    fr: { flag: "🇫🇷", code: "FR" }, es: { flag: "🇪🇸", code: "ES" }
+    en: { flag: "🇬🇧", code: "EN", name: "English" },
+    nb: { flag: "🇳🇴", code: "NO", name: "Norsk" },
+    fr: { flag: "🇫🇷", code: "FR", name: "Français" },
+    es: { flag: "🇪🇸", code: "ES", name: "Español" }
   };
   var LANG_KEY = "lockscreen-lang";
   var currentLang = "en";
@@ -2858,6 +2867,15 @@ window.qrcode = qrcode;
     o.value = f.stack;
     o.textContent = f.name;
     fontSel.appendChild(o);
+  });
+
+  // Populate language dropdown (flag + native name)
+  var langSel = $("langSelect");
+  LANG_ORDER.forEach(function (code) {
+    var o = document.createElement("option");
+    o.value = code;
+    o.textContent = LANG_META[code].flag + " " + LANG_META[code].name;
+    langSel.appendChild(o);
   });
 
   // Build text-box color theme swatches
@@ -3528,8 +3546,7 @@ window.qrcode = qrcode;
     document.querySelectorAll("[data-i18n-label]").forEach(function (el) {
       el.label = tr(el.getAttribute("data-i18n-label"));
     });
-    var m = LANG_META[lang];
-    $("langBtn").textContent = m.flag + " " + m.code;
+    $("langSelect").value = lang;
     // Refresh strings owned by JS (theme button label + canvas/dims) and re-draw.
     var curTheme = document.documentElement.getAttribute("data-theme") || "dark";
     $("themeBtn").textContent = tr(curTheme === "dark" ? "theme_light" : "theme_dark");
@@ -3537,9 +3554,8 @@ window.qrcode = qrcode;
     render();
     try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
   }
-  $("langBtn").addEventListener("click", function () {
-    var i = LANG_ORDER.indexOf(currentLang);
-    applyLang(LANG_ORDER[(i + 1) % LANG_ORDER.length]);
+  $("langSelect").addEventListener("change", function (e) {
+    applyLang(e.target.value);
     saveState();
   });
 
