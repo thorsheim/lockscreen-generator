@@ -22,11 +22,13 @@ one file. Nothing is uploaded anywhere; all processing is client-side in `<canva
   - **First `<script>`** — the bundled QR encoder (qrcode-generator v1.4.4, Kazuhiko
     Arase, MIT). Inlined verbatim and exposed as `window.qrcode`. Don't hand-edit it; to
     update, re-fetch the upstream file and re-splice (see "QR encoder" below).
-  - **Second `<script>`** — the app itself, one IIFE. Key pieces: `FONTS` list, the
-    `state` object + `defaults`, `loadState`/`saveState` (localStorage), text model
-    (`textLines`, `buildVCard`, `getQrModel`), image transform
-    (`baseScale`/`clampView`/`imageRect`), the shared `draw(ctx, W, H)`, pointer/wheel/
-    pinch handlers, control wiring, `doExport`, `initUI`.
+  - **Second `<script>`** — the app itself, one IIFE. Key pieces: `FONTS` list,
+    `BOX_THEMES` (text-box color presets), `I18N` translation dictionary + `LANG_ORDER` /
+    `LANG_META`, the `state` object + `defaults`, `loadState`/`saveState` (localStorage),
+    text model (`textLines`, `buildVCard`, `getQrModel`), image transform
+    (`baseScale`/`clampView`/`imageRect`), the shared `draw(ctx, W, H)`, `formatName`,
+    pointer/wheel/pinch handlers, control wiring, `applyBoxTheme`, theme + language
+    (`setTheme`, `tr`/`applyLang`/`detectLang`), `doExport`, `initUI`.
 - `README.md` — end-user usage.
 
 ## The one idea that makes it work: normalized coordinates + one `draw`
@@ -53,22 +55,40 @@ the photo.
   `clampView` prevents panning/zooming past the edges, so there are never empty borders.
   Wheel zoom is cursor-anchored; two-finger pinch zooms via the `pointers` Map.
 - **Hit-testing priority** on pointer-down: QR box → text box → otherwise pan the image.
-  `draw` records `lastBoxRect`/`lastQrRect` each frame for this. Dragging the box or QR sets
-  `layout="custom"`.
-- **Layout presets** (`top`/`center`/`bottom`) only set the vertical anchor `cy` for both
-  the box and QR; horizontal stays wherever it was. Dragging switches to `custom`.
+  `draw` records `lastBoxRect`/`lastQrRect` each frame for this. The text-box region only
+  intercepts when `state.box.enabled` (a hidden box never steals pans). Dragging the box or
+  QR sets `layout="custom"`.
+- **Layout presets** (`top`/`center`/`bottom`) set the box's vertical anchor `cy` (and
+  center it horizontally) and park the QR on the *opposite* vertical end, centered, so the
+  presets never overlap. Dragging either element switches `layout` to `custom`.
+- **Text-box color themes**: `BOX_THEMES` drives the swatch row in the Text-box card; each
+  swatch is a `<button>` built in JS, and `applyBoxTheme` sets box color, text color, and
+  opacity together (and syncs the pickers/slider).
 - **Text modes**: `contact` builds lines from prefix/name/phone/email/address (blank fields
   skipped); `free` is a verbatim textarea (line breaks kept). Both are word-wrapped to 86%
-  of frame width inside `draw`.
+  of frame width inside `draw`; a space-less token wider than that (long email/URL) is
+  hard-broken character-by-character by `breakLongWord` so it never overflows the box.
+- **Device label**: the line under the preview shows `formatName() + " · " + W " × " H`
+  (e.g. `iPhone 13/14/15 · 1170 × 2532`). `formatName` derives the friendly name from the
+  selected `<option>` text (part before the em dash), or `tr("dev_custom")` for custom.
 - **QR**: `vcard` mode builds a VCARD 3.0 string from the contact fields; `text` mode uses a
   raw string/URL. `getQrModel` caches by payload and overrides `qrcode.stringToBytes` with a
   `TextEncoder` so UTF-8 (accents, etc.) encodes correctly. If the payload is empty or too
   long for a QR, a labelled placeholder square is drawn instead (still draggable).
 - **Export**: PNG (lossless) or JPEG (quality slider). Filename is
   `lockscreen-<W>x<H>.<ext>`. Object URL is revoked after the click.
-- **Persistence**: `localStorage` keys `lockscreen-state-v1` (settings, debounced 250 ms)
-  and `lockscreen-theme`. Reads/writes are wrapped in try/catch for private-mode browsers.
-  Bump the `-v1` suffix if the state shape changes incompatibly.
+- **Internationalization**: English, Norwegian Bokmål (`nb`), French (`fr`), Spanish (`es`).
+  The header language button cycles through `LANG_ORDER`. `applyLang(lang)` rewrites every
+  element carrying `data-i18n` (textContent), `data-i18n-ph` (placeholder), or
+  `data-i18n-label` (optgroup `.label`), then re-renders so canvas/JS strings update too.
+  JS-generated strings go through `tr(key)` (canvas "upload" prompt, QR placeholder text,
+  export messages, theme-button label, `dev_custom`). On first load `detectLang()` picks
+  from `navigator.language` (Norwegian variants → `nb`), else English. The default contact
+  heading auto-migrates between languages **unless** the user customized it (checked against
+  every language's `default_prefix`).
+- **Persistence**: `localStorage` keys `lockscreen-state-v1` (settings, debounced 250 ms),
+  `lockscreen-theme`, and `lockscreen-lang`. Reads/writes are wrapped in try/catch for
+  private-mode browsers. Bump the `-v1` suffix if the state shape changes incompatibly.
 
 ## Gotchas
 
@@ -86,6 +106,13 @@ the photo.
 - **Preview vs export size**: the preview canvas is sized to fit the viewport
   (`PREVIEW_MAX_H`), the export canvas to `state.format.{w,h}`. Never assume preview pixels
   equal export pixels — always go through normalized coords.
+- **`setPointerCapture` can throw** (seen in some browsers, e.g. Firefox). `pointerdown`
+  registers the pointer in the `pointers` Map *before* calling it, and the call is wrapped
+  in `try/catch` — otherwise a throw aborts `dragMode` setup and dragging silently dies
+  while wheel-zoom keeps working. Keep that ordering if you touch the handler.
+- **Per-axis panning at 1× zoom is expected, not a bug.** At cover-fit only the overflowing
+  axis can pan (a wide photo in a tall frame pans left/right but is already snug top/bottom).
+  Zooming in frees both axes.
 
 ## Common changes
 
@@ -93,10 +120,19 @@ the photo.
   in the Screen-size card. The `format` change handler parses `WxH` automatically.
 - **Add a font**: add `{ name, stack }` to the `FONTS` array, and (if it's a web font) add
   its family to the Google Fonts `<link>` href. The dropdown is populated from `FONTS`.
-- **Add a new styling control**: add the input to the relevant card, store its value
-  normalized on `state`, wire an `input`/`change` listener that updates state +
-  `render()` + `saveState()`, render it inside `draw`, and set its initial value in
-  `initUI`.
+- **Add a text-box theme**: add `{ name, box, text, opacity }` to `BOX_THEMES`; the swatch
+  is built and wired automatically.
+- **Add a UI string**: give the element a `data-i18n` (or `-ph` / `-label`) attribute whose
+  value is a new key, and add that key to **all** language objects in `I18N`. For a string
+  built in JS, fetch it via `tr("key")` instead of hardcoding. Keep English (`en`) complete
+  — `tr` falls back to it for any missing key.
+- **Add a language**: add a full object to `I18N` (copy `en` and translate every key), add
+  its code to `LANG_ORDER`, and a `{ flag, code }` entry to `LANG_META`. `detectLang` and
+  the cycle button pick it up automatically.
+- **Add a new styling control**: add the input to the relevant card (with `data-i18n` on its
+  label), store its value normalized on `state`, wire an `input`/`change` listener that
+  updates state + `render()` + `saveState()`, render it inside `draw`, and set its initial
+  value in `initUI`.
 
 ## Verify after changes
 
@@ -106,4 +142,6 @@ confirm the file dimensions equal the selected device resolution and the image m
 preview. A headless Playwright smoke test was used during initial development (uploads an
 image, fills contact fields, zooms, enables QR, switches format, exports PNG+JPEG, checks
 the PNG IHDR dimensions and localStorage) — replicate that flow when touching `draw`,
-export, or the QR path.
+export, or the QR path. When touching i18n, also cycle the language button through all four
+languages and confirm headings, placeholders, optgroup labels, the canvas text, and export
+messages all switch (and that a customized contact heading is preserved).
