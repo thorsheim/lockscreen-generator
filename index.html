@@ -139,43 +139,46 @@
 <div class="wrap">
   <header>
     <div>
-      <h1>Lockscreen Generator</h1>
-      <p>Crop a photo to your phone screen and add your contact details — so a lost phone can find its way home.</p>
+      <h1 data-i18n="title">Lockscreen Generator</h1>
+      <p data-i18n="subtitle">Crop a photo to your phone screen and add your contact details — so a lost phone can find its way home.</p>
     </div>
-    <button class="theme-btn" id="themeBtn" type="button">Light mode</button>
+    <div class="hstack">
+      <button class="theme-btn" id="langBtn" type="button" title="Language">🇬🇧 EN</button>
+      <button class="theme-btn" id="themeBtn" type="button">Light mode</button>
+    </div>
   </header>
 
   <div class="layout">
     <!-- Controls -->
     <div class="controls">
       <div class="card">
-        <h2>1 · Image</h2>
+        <h2 data-i18n="h_image">1 · Image</h2>
         <div class="dropzone" id="dropzone">
-          <strong>Click to upload</strong> or drop an image here
+          <strong data-i18n="dz_click">Click to upload</strong> <span data-i18n="dz_rest">or drop an image here</span>
         </div>
         <input type="file" id="fileInput" accept="image/*">
         <div class="row" style="margin-top:12px;">
-          <label for="zoom">Zoom</label>
+          <label for="zoom" data-i18n="lbl_zoom">Zoom</label>
           <input type="range" id="zoom" class="grow" min="1" max="5" step="0.01" value="1">
           <span class="val" id="zoomVal">1.0×</span>
         </div>
         <div class="hstack">
-          <button class="btn" id="fitBtn" type="button">Re-center</button>
-          <button class="btn" id="clearImgBtn" type="button">Remove image</button>
+          <button class="btn" id="fitBtn" type="button" data-i18n="btn_recenter">Re-center</button>
+          <button class="btn" id="clearImgBtn" type="button" data-i18n="btn_remove">Remove image</button>
         </div>
         <div class="row" style="margin-top:12px;">
-          <label for="bgColor">Backdrop</label>
+          <label for="bgColor" data-i18n="lbl_backdrop">Backdrop</label>
           <input type="color" id="bgColor" value="#000000">
-          <span class="muted-note" style="margin:0;">Shows where the photo doesn't cover.</span>
+          <span class="muted-note" style="margin:0;" data-i18n="note_backdrop">Shows where the photo doesn't cover.</span>
         </div>
       </div>
 
       <div class="card">
-        <h2>2 · Screen size</h2>
+        <h2 data-i18n="h_screen">2 · Screen size</h2>
         <div class="row">
-          <label for="format">Device</label>
+          <label for="format" data-i18n="lbl_device">Device</label>
           <select id="format" class="grow">
-            <optgroup label="Generic">
+            <optgroup label="Generic" data-i18n-label="grp_generic">
               <option value="1080x1920">9:16 — 1080×1920</option>
               <option value="1080x2340">9:19.5 — 1080×2340</option>
               <option value="1080x2400">9:20 — 1080×2400</option>
@@ -192,128 +195,128 @@
               <option value="1080x2340">Galaxy S — 1080×2340</option>
               <option value="1440x3120">Galaxy S Ultra — 1440×3120</option>
             </optgroup>
-            <optgroup label="Custom">
-              <option value="custom">Custom size…</option>
+            <optgroup label="Custom" data-i18n-label="grp_custom">
+              <option value="custom" data-i18n="opt_custom">Custom size…</option>
             </optgroup>
           </select>
         </div>
         <div class="row hidden" id="customRow">
-          <label>Custom</label>
-          <input type="number" id="customW" min="100" max="8000" step="1" placeholder="width" class="grow">
+          <label data-i18n="lbl_custom">Custom</label>
+          <input type="number" id="customW" min="100" max="8000" step="1" placeholder="width" data-i18n-ph="ph_width" class="grow">
           <span class="val">×</span>
-          <input type="number" id="customH" min="100" max="8000" step="1" placeholder="height" class="grow">
+          <input type="number" id="customH" min="100" max="8000" step="1" placeholder="height" data-i18n-ph="ph_height" class="grow">
         </div>
       </div>
 
       <div class="card">
-        <h2>3 · Text</h2>
+        <h2 data-i18n="h_text">3 · Text</h2>
         <div class="row">
-          <label>Content</label>
+          <label data-i18n="lbl_content">Content</label>
           <div class="btn-group" id="modeGroup">
-            <button class="btn active" data-mode="contact" type="button">Contact</button>
-            <button class="btn" data-mode="free" type="button">Free text</button>
+            <button class="btn active" data-mode="contact" type="button" data-i18n="mode_contact">Contact</button>
+            <button class="btn" data-mode="free" type="button" data-i18n="mode_free">Free text</button>
           </div>
         </div>
 
         <div id="contactFields">
-          <div class="row"><input type="text" id="cPrefix" placeholder="Heading (e.g. If found, please contact)"></div>
-          <div class="row"><input type="text" id="cName" placeholder="Name"></div>
-          <div class="row"><input type="text" id="cPhone" placeholder="Phone number"></div>
-          <div class="row"><input type="text" id="cEmail" placeholder="Email address"></div>
-          <div class="row"><textarea id="cAddress" placeholder="Address (optional)"></textarea></div>
+          <div class="row"><input type="text" id="cPrefix" placeholder="Heading (e.g. If found, please contact)" data-i18n-ph="ph_prefix"></div>
+          <div class="row"><input type="text" id="cName" placeholder="Name" data-i18n-ph="ph_name"></div>
+          <div class="row"><input type="text" id="cPhone" placeholder="Phone number" data-i18n-ph="ph_phone"></div>
+          <div class="row"><input type="text" id="cEmail" placeholder="Email address" data-i18n-ph="ph_email"></div>
+          <div class="row"><textarea id="cAddress" placeholder="Address (optional)" data-i18n-ph="ph_address"></textarea></div>
         </div>
 
         <div id="freeField" class="hidden">
-          <textarea id="freeText" placeholder="Type anything — line breaks are kept."></textarea>
+          <textarea id="freeText" placeholder="Type anything — line breaks are kept." data-i18n-ph="ph_free"></textarea>
         </div>
       </div>
 
       <div class="card">
-        <h2>4 · Text style</h2>
+        <h2 data-i18n="h_style">4 · Text style</h2>
         <div class="row">
-          <label for="font">Font</label>
+          <label for="font" data-i18n="lbl_font">Font</label>
           <select id="font" class="grow"></select>
         </div>
         <div class="row">
-          <label for="fontSize">Size</label>
+          <label for="fontSize" data-i18n="lbl_size">Size</label>
           <input type="range" id="fontSize" class="grow" min="2" max="12" step="0.1" value="4.5">
           <span class="val" id="fontSizeVal">4.5%</span>
         </div>
         <div class="row">
-          <label>Color</label>
+          <label data-i18n="lbl_color">Color</label>
           <input type="color" id="textColor" value="#ffffff">
           <span style="flex:1;"></span>
-          <span class="val">Opacity</span>
+          <span class="val" data-i18n="lbl_opacity">Opacity</span>
           <input type="range" id="textOpacity" style="flex:1;" min="0" max="1" step="0.01" value="1">
         </div>
         <div class="row">
-          <label>Align</label>
+          <label data-i18n="lbl_align">Align</label>
           <div class="btn-group" id="alignGroup">
-            <button class="btn active" data-align="left" type="button">Left</button>
-            <button class="btn" data-align="center" type="button">Center</button>
-            <button class="btn" data-align="right" type="button">Right</button>
+            <button class="btn active" data-align="left" type="button" data-i18n="align_left">Left</button>
+            <button class="btn" data-align="center" type="button" data-i18n="align_center">Center</button>
+            <button class="btn" data-align="right" type="button" data-i18n="align_right">Right</button>
           </div>
         </div>
         <div class="row">
-          <label class="check"><input type="checkbox" id="bold"> Bold</label>
-          <label class="check"><input type="checkbox" id="shadow" checked> Drop shadow</label>
+          <label class="check"><input type="checkbox" id="bold"> <span data-i18n="chk_bold">Bold</span></label>
+          <label class="check"><input type="checkbox" id="shadow" checked> <span data-i18n="chk_shadow">Drop shadow</span></label>
         </div>
       </div>
 
       <div class="card">
-        <h2>5 · Text box</h2>
-        <label class="check" style="margin-bottom:12px;"><input type="checkbox" id="boxEnabled" checked> Show background box behind text</label>
+        <h2 data-i18n="h_box">5 · Text box</h2>
+        <label class="check" style="margin-bottom:12px;"><input type="checkbox" id="boxEnabled" checked> <span data-i18n="chk_box">Show background box behind text</span></label>
         <div class="row">
-          <label>Themes</label>
+          <label data-i18n="lbl_themes">Themes</label>
           <div class="hstack" id="boxThemes"></div>
         </div>
         <div class="row">
-          <label>Color</label>
+          <label data-i18n="lbl_color">Color</label>
           <input type="color" id="boxColor" value="#000000">
           <span style="flex:1;"></span>
-          <span class="val">Opacity</span>
+          <span class="val" data-i18n="lbl_opacity">Opacity</span>
           <input type="range" id="boxOpacity" style="flex:1.4;" min="0" max="1" step="0.01" value="0.75">
         </div>
         <div class="row">
-          <label for="boxRadius">Corners</label>
+          <label for="boxRadius" data-i18n="lbl_corners">Corners</label>
           <input type="range" id="boxRadius" class="grow" min="0" max="0.12" step="0.005" value="0.04">
         </div>
         <div class="row">
-          <label for="boxPad">Padding</label>
+          <label for="boxPad" data-i18n="lbl_padding">Padding</label>
           <input type="range" id="boxPad" class="grow" min="0" max="0.1" step="0.005" value="0.035">
         </div>
         <div class="row">
-          <label>Position</label>
+          <label data-i18n="lbl_position">Position</label>
           <div class="btn-group" id="layoutGroup">
-            <button class="btn" data-layout="top" type="button">Top</button>
-            <button class="btn" data-layout="center" type="button">Center</button>
-            <button class="btn active" data-layout="bottom" type="button">Bottom</button>
+            <button class="btn" data-layout="top" type="button" data-i18n="pos_top">Top</button>
+            <button class="btn" data-layout="center" type="button" data-i18n="pos_center">Center</button>
+            <button class="btn active" data-layout="bottom" type="button" data-i18n="pos_bottom">Bottom</button>
           </div>
         </div>
-        <p class="muted-note">Tip: drag the box (or the QR code) directly on the preview to place it anywhere.</p>
+        <p class="muted-note" data-i18n="note_drag">Tip: drag the box (or the QR code) directly on the preview to place it anywhere.</p>
       </div>
 
       <div class="card">
-        <h2>6 · QR code <span style="text-transform:none;font-weight:400;color:var(--muted);">(optional)</span></h2>
-        <label class="check" style="margin-bottom:12px;"><input type="checkbox" id="qrEnabled"> Add a scannable QR code</label>
+        <h2><span data-i18n="h_qr">6 · QR code</span> <span style="text-transform:none;font-weight:400;color:var(--muted);" data-i18n="qr_optional">(optional)</span></h2>
+        <label class="check" style="margin-bottom:12px;"><input type="checkbox" id="qrEnabled"> <span data-i18n="chk_qr">Add a scannable QR code</span></label>
         <div id="qrControls" class="hidden">
           <div class="row">
-            <label>Encodes</label>
+            <label data-i18n="lbl_encodes">Encodes</label>
             <div class="btn-group" id="qrModeGroup">
-              <button class="btn active" data-qrmode="vcard" type="button">Contact card</button>
-              <button class="btn" data-qrmode="text" type="button">Custom text</button>
+              <button class="btn active" data-qrmode="vcard" type="button" data-i18n="qr_vcard">Contact card</button>
+              <button class="btn" data-qrmode="text" type="button" data-i18n="qr_text">Custom text</button>
             </div>
           </div>
-          <div class="row hidden" id="qrTextRow"><input type="text" id="qrText" placeholder="Text or URL to encode"></div>
+          <div class="row hidden" id="qrTextRow"><input type="text" id="qrText" placeholder="Text or URL to encode" data-i18n-ph="ph_qrtext"></div>
           <div class="row">
-            <label for="qrSize">Size</label>
+            <label for="qrSize" data-i18n="lbl_size">Size</label>
             <input type="range" id="qrSize" class="grow" min="0.08" max="0.5" step="0.005" value="0.2">
           </div>
           <div class="row">
-            <label>Colors</label>
-            <span class="val">Dots</span>
+            <label data-i18n="lbl_colors">Colors</label>
+            <span class="val" data-i18n="qr_dots">Dots</span>
             <input type="color" id="qrFg" value="#000000">
-            <span class="val">BG</span>
+            <span class="val" data-i18n="qr_bg">BG</span>
             <input type="color" id="qrBg" value="#ffffff">
           </div>
           <div class="msg" id="qrMsg"></div>
@@ -321,20 +324,20 @@
       </div>
 
       <div class="card">
-        <h2>7 · Export</h2>
+        <h2 data-i18n="h_export">7 · Export</h2>
         <div class="row">
-          <label>Format</label>
+          <label data-i18n="lbl_format">Format</label>
           <div class="btn-group" id="fmtGroup">
             <button class="btn active" data-fmt="png" type="button">PNG</button>
             <button class="btn" data-fmt="jpeg" type="button">JPEG</button>
           </div>
         </div>
         <div class="row hidden" id="qualityRow">
-          <label for="quality">Quality</label>
+          <label for="quality" data-i18n="lbl_quality">Quality</label>
           <input type="range" id="quality" class="grow" min="0.5" max="1" step="0.01" value="0.92">
           <span class="val" id="qualityVal">92%</span>
         </div>
-        <button class="btn accent wide" id="downloadBtn" type="button">Download lockscreen</button>
+        <button class="btn accent wide" id="downloadBtn" type="button" data-i18n="btn_download">Download lockscreen</button>
         <div class="msg" id="exportMsg"></div>
       </div>
     </div>
@@ -345,7 +348,7 @@
         <canvas id="preview" width="270" height="585"></canvas>
       </div>
       <div class="dims" id="dims">1080 × 2340</div>
-      <div class="hint">Drag to pan · scroll / pinch to zoom</div>
+      <div class="hint" data-i18n="hint">Drag to pan · scroll / pinch to zoom</div>
     </div>
   </div>
 </div>
@@ -2681,6 +2684,135 @@ window.qrcode = qrcode;
     { name: "Ocean", box: "#0b3d68", text: "#eaf4ff", opacity: 0.82 },
     { name: "Forest", box: "#0f5132", text: "#e7fff2", opacity: 0.82 }
   ];
+  // ---- Translations -------------------------------------------------------
+  // Keys are referenced by [data-i18n] (textContent), [data-i18n-ph]
+  // (placeholder), [data-i18n-label] (optgroup label), and by tr() in JS.
+  var I18N = {
+    en: {
+      title: "Lockscreen Generator",
+      subtitle: "Crop a photo to your phone screen and add your contact details — so a lost phone can find its way home.",
+      h_image: "1 · Image", dz_click: "Click to upload", dz_rest: "or drop an image here",
+      lbl_zoom: "Zoom", btn_recenter: "Re-center", btn_remove: "Remove image",
+      lbl_backdrop: "Backdrop", note_backdrop: "Shows where the photo doesn't cover.",
+      h_screen: "2 · Screen size", lbl_device: "Device", opt_custom: "Custom size…",
+      grp_generic: "Generic", grp_custom: "Custom", lbl_custom: "Custom", ph_width: "width", ph_height: "height",
+      h_text: "3 · Text", lbl_content: "Content", mode_contact: "Contact", mode_free: "Free text",
+      ph_prefix: "Heading (e.g. If found, please contact)", ph_name: "Name", ph_phone: "Phone number",
+      ph_email: "Email address", ph_address: "Address (optional)", ph_free: "Type anything — line breaks are kept.",
+      h_style: "4 · Text style", lbl_font: "Font", lbl_size: "Size", lbl_color: "Color", lbl_opacity: "Opacity",
+      lbl_align: "Align", align_left: "Left", align_center: "Center", align_right: "Right",
+      chk_bold: "Bold", chk_shadow: "Drop shadow",
+      h_box: "5 · Text box", chk_box: "Show background box behind text", lbl_themes: "Themes",
+      lbl_corners: "Corners", lbl_padding: "Padding", lbl_position: "Position",
+      pos_top: "Top", pos_center: "Center", pos_bottom: "Bottom",
+      note_drag: "Tip: drag the box (or the QR code) directly on the preview to place it anywhere.",
+      h_qr: "6 · QR code", qr_optional: "(optional)", chk_qr: "Add a scannable QR code", lbl_encodes: "Encodes",
+      qr_vcard: "Contact card", qr_text: "Custom text", ph_qrtext: "Text or URL to encode",
+      lbl_colors: "Colors", qr_dots: "Dots", qr_bg: "BG",
+      h_export: "7 · Export", lbl_format: "Format", lbl_quality: "Quality", btn_download: "Download lockscreen",
+      hint: "Drag to pan · scroll / pinch to zoom",
+      theme_light: "Light mode", theme_dark: "Dark mode", canvas_upload: "Upload an image", dev_custom: "Custom",
+      qr_toolong: "QR: too long", qr_addinfo: "QR: add info",
+      msg_saved: "Saved {dims} {fmt}.", msg_exportfail: "Export failed.",
+      msg_pickimage: "Please choose an image file.", msg_readfail: "Could not read that image.",
+      default_prefix: "If found, please contact"
+    },
+    nb: {
+      title: "Låseskjerm-generator",
+      subtitle: "Beskjær et bilde til telefonskjermen og legg til kontaktinformasjonen din – slik at en mistet telefon finner veien hjem.",
+      h_image: "1 · Bilde", dz_click: "Klikk for å laste opp", dz_rest: "eller slipp et bilde her",
+      lbl_zoom: "Zoom", btn_recenter: "Sentrer på nytt", btn_remove: "Fjern bilde",
+      lbl_backdrop: "Bakgrunn", note_backdrop: "Vises der bildet ikke dekker.",
+      h_screen: "2 · Skjermstørrelse", lbl_device: "Enhet", opt_custom: "Egendefinert størrelse…",
+      grp_generic: "Generisk", grp_custom: "Egendefinert", lbl_custom: "Egendefinert", ph_width: "bredde", ph_height: "høyde",
+      h_text: "3 · Tekst", lbl_content: "Innhold", mode_contact: "Kontakt", mode_free: "Fritekst",
+      ph_prefix: "Overskrift (f.eks. Hvis funnet, vennligst kontakt)", ph_name: "Navn", ph_phone: "Telefonnummer",
+      ph_email: "E-postadresse", ph_address: "Adresse (valgfritt)", ph_free: "Skriv hva som helst – linjeskift beholdes.",
+      h_style: "4 · Tekststil", lbl_font: "Skrift", lbl_size: "Størrelse", lbl_color: "Farge", lbl_opacity: "Dekkevne",
+      lbl_align: "Juster", align_left: "Venstre", align_center: "Midtstilt", align_right: "Høyre",
+      chk_bold: "Fet", chk_shadow: "Skygge",
+      h_box: "5 · Tekstboks", chk_box: "Vis bakgrunnsboks bak teksten", lbl_themes: "Temaer",
+      lbl_corners: "Hjørner", lbl_padding: "Marg", lbl_position: "Posisjon",
+      pos_top: "Topp", pos_center: "Midten", pos_bottom: "Bunn",
+      note_drag: "Tips: dra boksen (eller QR-koden) rett på forhåndsvisningen for å plassere den hvor som helst.",
+      h_qr: "6 · QR-kode", qr_optional: "(valgfritt)", chk_qr: "Legg til en skannbar QR-kode", lbl_encodes: "Koder",
+      qr_vcard: "Kontaktkort", qr_text: "Egendefinert tekst", ph_qrtext: "Tekst eller URL som skal kodes",
+      lbl_colors: "Farger", qr_dots: "Prikker", qr_bg: "BG",
+      h_export: "7 · Eksport", lbl_format: "Format", lbl_quality: "Kvalitet", btn_download: "Last ned låseskjerm",
+      hint: "Dra for å panorere · rull / knip for å zoome",
+      theme_light: "Lyst tema", theme_dark: "Mørkt tema", canvas_upload: "Last opp et bilde", dev_custom: "Egendefinert",
+      qr_toolong: "QR: for lang", qr_addinfo: "QR: legg til info",
+      msg_saved: "Lagret {dims} {fmt}.", msg_exportfail: "Eksport mislyktes.",
+      msg_pickimage: "Velg en bildefil.", msg_readfail: "Kunne ikke lese bildet.",
+      default_prefix: "Hvis funnet, vennligst kontakt"
+    },
+    fr: {
+      title: "Générateur d'écran de verrouillage",
+      subtitle: "Recadrez une photo aux dimensions de votre écran et ajoutez vos coordonnées — pour qu'un téléphone perdu retrouve son propriétaire.",
+      h_image: "1 · Image", dz_click: "Cliquez pour téléverser", dz_rest: "ou déposez une image ici",
+      lbl_zoom: "Zoom", btn_recenter: "Recentrer", btn_remove: "Supprimer l'image",
+      lbl_backdrop: "Arrière-plan", note_backdrop: "Visible là où la photo ne couvre pas.",
+      h_screen: "2 · Taille d'écran", lbl_device: "Appareil", opt_custom: "Taille personnalisée…",
+      grp_generic: "Générique", grp_custom: "Personnalisé", lbl_custom: "Personnalisé", ph_width: "largeur", ph_height: "hauteur",
+      h_text: "3 · Texte", lbl_content: "Contenu", mode_contact: "Contact", mode_free: "Texte libre",
+      ph_prefix: "Titre (ex. En cas de perte, veuillez contacter)", ph_name: "Nom", ph_phone: "Numéro de téléphone",
+      ph_email: "Adresse e-mail", ph_address: "Adresse (facultatif)", ph_free: "Saisissez n'importe quoi — les sauts de ligne sont conservés.",
+      h_style: "4 · Style du texte", lbl_font: "Police", lbl_size: "Taille", lbl_color: "Couleur", lbl_opacity: "Opacité",
+      lbl_align: "Aligner", align_left: "Gauche", align_center: "Centré", align_right: "Droite",
+      chk_bold: "Gras", chk_shadow: "Ombre portée",
+      h_box: "5 · Cadre de texte", chk_box: "Afficher un cadre derrière le texte", lbl_themes: "Thèmes",
+      lbl_corners: "Coins", lbl_padding: "Marge", lbl_position: "Position",
+      pos_top: "Haut", pos_center: "Centre", pos_bottom: "Bas",
+      note_drag: "Astuce : faites glisser le cadre (ou le QR code) directement sur l'aperçu pour le placer où vous voulez.",
+      h_qr: "6 · QR code", qr_optional: "(facultatif)", chk_qr: "Ajouter un QR code scannable", lbl_encodes: "Encode",
+      qr_vcard: "Carte de visite", qr_text: "Texte personnalisé", ph_qrtext: "Texte ou URL à encoder",
+      lbl_colors: "Couleurs", qr_dots: "Points", qr_bg: "Fond",
+      h_export: "7 · Exportation", lbl_format: "Format", lbl_quality: "Qualité", btn_download: "Télécharger l'écran",
+      hint: "Glissez pour déplacer · molette / pincez pour zoomer",
+      theme_light: "Thème clair", theme_dark: "Thème sombre", canvas_upload: "Téléversez une image", dev_custom: "Personnalisé",
+      qr_toolong: "QR : trop long", qr_addinfo: "QR : ajoutez des infos",
+      msg_saved: "Enregistré {dims} {fmt}.", msg_exportfail: "Échec de l'exportation.",
+      msg_pickimage: "Veuillez choisir un fichier image.", msg_readfail: "Impossible de lire cette image.",
+      default_prefix: "En cas de perte, veuillez contacter"
+    },
+    es: {
+      title: "Generador de pantalla de bloqueo",
+      subtitle: "Recorta una foto al tamaño de tu pantalla y añade tus datos de contacto, para que un teléfono perdido vuelva a casa.",
+      h_image: "1 · Imagen", dz_click: "Haz clic para subir", dz_rest: "o suelta una imagen aquí",
+      lbl_zoom: "Zoom", btn_recenter: "Recentrar", btn_remove: "Quitar imagen",
+      lbl_backdrop: "Fondo", note_backdrop: "Se ve donde la foto no cubre.",
+      h_screen: "2 · Tamaño de pantalla", lbl_device: "Dispositivo", opt_custom: "Tamaño personalizado…",
+      grp_generic: "Genérico", grp_custom: "Personalizado", lbl_custom: "Personalizado", ph_width: "ancho", ph_height: "alto",
+      h_text: "3 · Texto", lbl_content: "Contenido", mode_contact: "Contacto", mode_free: "Texto libre",
+      ph_prefix: "Encabezado (p. ej. Si lo encuentra, contacte con)", ph_name: "Nombre", ph_phone: "Número de teléfono",
+      ph_email: "Correo electrónico", ph_address: "Dirección (opcional)", ph_free: "Escribe lo que quieras: se conservan los saltos de línea.",
+      h_style: "4 · Estilo de texto", lbl_font: "Fuente", lbl_size: "Tamaño", lbl_color: "Color", lbl_opacity: "Opacidad",
+      lbl_align: "Alinear", align_left: "Izquierda", align_center: "Centro", align_right: "Derecha",
+      chk_bold: "Negrita", chk_shadow: "Sombra",
+      h_box: "5 · Cuadro de texto", chk_box: "Mostrar un cuadro de fondo tras el texto", lbl_themes: "Temas",
+      lbl_corners: "Esquinas", lbl_padding: "Margen", lbl_position: "Posición",
+      pos_top: "Arriba", pos_center: "Centro", pos_bottom: "Abajo",
+      note_drag: "Consejo: arrastra el cuadro (o el código QR) directamente en la vista previa para colocarlo donde quieras.",
+      h_qr: "6 · Código QR", qr_optional: "(opcional)", chk_qr: "Añadir un código QR escaneable", lbl_encodes: "Codifica",
+      qr_vcard: "Tarjeta de contacto", qr_text: "Texto personalizado", ph_qrtext: "Texto o URL para codificar",
+      lbl_colors: "Colores", qr_dots: "Puntos", qr_bg: "Fondo",
+      h_export: "7 · Exportar", lbl_format: "Formato", lbl_quality: "Calidad", btn_download: "Descargar pantalla",
+      hint: "Arrastra para mover · rueda / pellizca para ampliar",
+      theme_light: "Tema claro", theme_dark: "Tema oscuro", canvas_upload: "Sube una imagen", dev_custom: "Personalizado",
+      qr_toolong: "QR: demasiado largo", qr_addinfo: "QR: añade datos",
+      msg_saved: "Guardado {dims} {fmt}.", msg_exportfail: "Error al exportar.",
+      msg_pickimage: "Elige un archivo de imagen.", msg_readfail: "No se pudo leer la imagen.",
+      default_prefix: "Si lo encuentra, contacte con"
+    }
+  };
+  var LANG_ORDER = ["en", "nb", "fr", "es"];
+  var LANG_META = {
+    en: { flag: "🇬🇧", code: "EN" }, nb: { flag: "🇳🇴", code: "NO" },
+    fr: { flag: "🇫🇷", code: "FR" }, es: { flag: "🇪🇸", code: "ES" }
+  };
+  var LANG_KEY = "lockscreen-lang";
+  var currentLang = "en";
+
   var LS_KEY = "lockscreen-state-v1";
   var THEME_KEY = "lockscreen-theme";
   var PREVIEW_MAX_H = 600; // px on screen
@@ -2791,7 +2923,7 @@ window.qrcode = qrcode;
     if (c.address && c.address.trim()) {
       c.address.split(/\r?\n/).forEach(function (a) { if (a.trim()) lines.push(a.trim()); });
     }
-    return lines.length ? lines : ["If found, please contact"];
+    return lines.length ? lines : [tr("default_prefix")];
   }
 
   function buildVCard() {
@@ -2891,7 +3023,7 @@ window.qrcode = qrcode;
       c.font = (H * 0.03) + "px system-ui, sans-serif";
       c.textAlign = "center";
       c.textBaseline = "middle";
-      c.fillText("Upload an image", W / 2, H / 2);
+      c.fillText(tr("canvas_upload"), W / 2, H / 2);
       c.textAlign = "left";
     }
 
@@ -3003,7 +3135,7 @@ window.qrcode = qrcode;
       c.fillStyle = "rgba(0,0,0,0.5)";
       c.font = (size * 0.1) + "px system-ui, sans-serif";
       c.textAlign = "center"; c.textBaseline = "middle";
-      c.fillText(res.err === "toolong" ? "QR: too long" : "QR: add info", x + size / 2, y + size / 2);
+      c.fillText(res.err === "toolong" ? tr("qr_toolong") : tr("qr_addinfo"), x + size / 2, y + size / 2);
       c.textAlign = "left";
       return;
     }
@@ -3040,7 +3172,7 @@ window.qrcode = qrcode;
   // ---- Render (preview) ---------------------------------------------------
   // Friendly device name for the current format (e.g. "iPhone 13/14/15").
   function formatName() {
-    if (state.format.sel === "custom") return "Custom";
+    if (state.format.sel === "custom") return tr("dev_custom");
     var opt = Array.prototype.find.call($("format").options, function (o) { return o.value === state.format.sel; });
     return opt ? opt.textContent.split("—")[0].trim() : "";
   }
@@ -3167,7 +3299,7 @@ window.qrcode = qrcode;
 
   // Image upload
   function loadFile(file) {
-    if (!file || !/^image\//.test(file.type)) { msg("exportMsg", "Please choose an image file.", "warn"); return; }
+    if (!file || !/^image\//.test(file.type)) { msg("exportMsg", tr("msg_pickimage"), "warn"); return; }
     var reader = new FileReader();
     reader.onload = function (ev) {
       var im = new Image();
@@ -3176,7 +3308,7 @@ window.qrcode = qrcode;
         state.view = { scale: 1, offX: 0, offY: 0 };
         syncZoom(); render(); msg("exportMsg", "", "");
       };
-      im.onerror = function () { msg("exportMsg", "Could not read that image.", "warn"); };
+      im.onerror = function () { msg("exportMsg", tr("msg_readfail"), "warn"); };
       im.src = ev.target.result;
     };
     reader.readAsDataURL(file);
@@ -3334,14 +3466,14 @@ window.qrcode = qrcode;
     var ext = state.exportFmt === "jpeg" ? "jpg" : "png";
     var q = state.exportFmt === "jpeg" ? state.quality : undefined;
     off.toBlob(function (blob) {
-      if (!blob) { msg("exportMsg", "Export failed.", "warn"); return; }
+      if (!blob) { msg("exportMsg", tr("msg_exportfail"), "warn"); return; }
       var url = URL.createObjectURL(blob);
       var a = document.createElement("a");
       a.href = url;
       a.download = "lockscreen-" + W + "x" + H + "." + ext;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-      msg("exportMsg", "Saved " + W + "×" + H + " " + ext.toUpperCase() + ".", "ok");
+      msg("exportMsg", tr("msg_saved").replace("{dims}", W + "×" + H).replace("{fmt}", ext.toUpperCase()), "ok");
     }, type, q);
     render(); // restore preview-scale clamp
   }
@@ -3355,7 +3487,7 @@ window.qrcode = qrcode;
   // ---- Theme --------------------------------------------------------------
   function setTheme(t) {
     document.documentElement.setAttribute("data-theme", t);
-    $("themeBtn").textContent = t === "dark" ? "Light mode" : "Dark mode";
+    $("themeBtn").textContent = tr(t === "dark" ? "theme_light" : "theme_dark");
     try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
   }
   $("themeBtn").addEventListener("click", function () {
@@ -3363,8 +3495,57 @@ window.qrcode = qrcode;
     setTheme(cur === "dark" ? "light" : "dark");
   });
 
+  // ---- Language -----------------------------------------------------------
+  function tr(key) {
+    var d = I18N[currentLang] || I18N.en;
+    if (d[key] != null) return d[key];
+    return I18N.en[key] != null ? I18N.en[key] : key;
+  }
+  function detectLang() {
+    try { var s = localStorage.getItem(LANG_KEY); if (s && I18N[s]) return s; } catch (e) {}
+    var n = (navigator.language || "en").slice(0, 2).toLowerCase();
+    if (n === "no" || n === "nb" || n === "nn") return "nb";
+    return I18N[n] ? n : "en";
+  }
+  function applyLang(lang) {
+    if (!I18N[lang]) lang = "en";
+    // Migrate the contact heading if it's still an untouched default in any language.
+    var defaults = LANG_ORDER.map(function (l) { return I18N[l].default_prefix; });
+    var p = state.text.contact.prefix;
+    if (!p || defaults.indexOf(p) !== -1) {
+      state.text.contact.prefix = I18N[lang].default_prefix;
+      $("cPrefix").value = state.text.contact.prefix;
+    }
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var v = tr(el.getAttribute("data-i18n"));
+      if (v != null) el.textContent = v;
+    });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function (el) {
+      el.placeholder = tr(el.getAttribute("data-i18n-ph"));
+    });
+    document.querySelectorAll("[data-i18n-label]").forEach(function (el) {
+      el.label = tr(el.getAttribute("data-i18n-label"));
+    });
+    var m = LANG_META[lang];
+    $("langBtn").textContent = m.flag + " " + m.code;
+    // Refresh strings owned by JS (theme button label + canvas/dims) and re-draw.
+    var curTheme = document.documentElement.getAttribute("data-theme") || "dark";
+    $("themeBtn").textContent = tr(curTheme === "dark" ? "theme_light" : "theme_dark");
+    qrCache.key = ""; // QR placeholder text may be localized
+    render();
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+  }
+  $("langBtn").addEventListener("click", function () {
+    var i = LANG_ORDER.indexOf(currentLang);
+    applyLang(LANG_ORDER[(i + 1) % LANG_ORDER.length]);
+    saveState();
+  });
+
   // ---- Init UI from state -------------------------------------------------
   function initUI() {
+    currentLang = detectLang();
     try { setTheme(localStorage.getItem(THEME_KEY) || "dark"); } catch (e) { setTheme("dark"); }
 
     // format select
@@ -3425,7 +3606,7 @@ window.qrcode = qrcode;
     $("quality").value = state.quality;
     $("qualityVal").textContent = Math.round(state.quality * 100) + "%";
 
-    render();
+    applyLang(currentLang); // translates the UI and renders
   }
 
   initUI();
