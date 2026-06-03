@@ -30,7 +30,16 @@ one file. Nothing is uploaded anywhere; all processing is client-side in `<canva
     passwordscon.org/mailcheck/. It is **static, not i18n'd** (proper-noun credit; same in
     every language) and uses theme vars (`--muted` text, `--accent` links, `--line` divider).
     Below it a `.site-version` line (`Version YYYY-Month-DD — changelog`) links to the repo's
-    GitHub commit history as the changelog; **bump that date string when you ship a change.**
+    GitHub commit history as the changelog. The date is bumped **automatically** by the
+    pre-commit hook (see below) whenever `index.html` is part of a commit — don't edit it by
+    hand.
+- `.githooks/pre-commit` — bash hook that rewrites the footer's `Version YYYY-Month-DD` date
+  to today (`LC_ALL=C date +%Y-%B-%d`) and re-stages `index.html`, but only when `index.html`
+  is already staged. Enabled via `git config core.hooksPath .githooks` (a **local** setting,
+  not committed — a fresh clone must run that one command to activate it). The hook replaces
+  only the date token, leaving ` — changelog` and the em dash intact. Caveat: it `git add`s
+  the whole working `index.html`, so don't leave unrelated unstaged edits in it while
+  committing.
   - **First `<script>`** — the bundled QR encoder (qrcode-generator v1.4.4, Kazuhiko
     Arase, MIT). Inlined verbatim and exposed as `window.qrcode`. Don't hand-edit it; to
     update, re-fetch the upstream file and re-splice (see "QR encoder" below).

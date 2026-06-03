@@ -61,3 +61,12 @@ details are visible without unlocking.
 ## Privacy
 
 100% client-side. The photo and your contact details never leave your device.
+
+## Development
+
+There's no build step — edit `index.html` and reload. After cloning, enable the version
+hook once so the footer's date stamps itself on each commit that touches `index.html`:
+
+```sh
+git config core.hooksPath .githooks
+```

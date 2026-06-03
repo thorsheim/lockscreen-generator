@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# Auto-bump the footer version date in index.html to today's date.
+#
+# Runs only when index.html is part of the commit, rewrites the
+# "Version YYYY-Month-DD" string in the footer to today's date, and
+# re-stages the file. Enable with:  git config core.hooksPath .githooks
+#
+# Note: `git add index.html` stages the whole working file, so don't keep
+# unrelated *unstaged* edits in index.html while committing — stage what you
+# mean to ship.
+set -euo pipefail
+
+# Nothing to do unless index.html is being committed.
+git diff --cached --name-only | grep -qx 'index.html' || exit 0
+
+today="$(LC_ALL=C date +%Y-%B-%d)"
+current="$(grep -oE 'Version [0-9]{4}-[A-Za-z]+-[0-9]{2}' index.html | head -1 | sed 's/^Version //')"
+
+# Already today's date — leave it (and the em dash / "changelog") alone.
+[ "$current" = "$today" ] && exit 0
+
+# Replace only the date token; the " — changelog" suffix is untouched.
+sed -i -E "s/(Version )[0-9]{4}-[A-Za-z]+-[0-9]{2}/\1${today}/" index.html
+git add index.html
+echo "pre-commit: bumped footer version date to ${today}"
