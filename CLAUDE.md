@@ -18,10 +18,19 @@ one file. Nothing is uploaded anywhere; all processing is client-side in `<canva
 - `index.html` — the entire app:
   - `:root` / `[data-theme="light"]` — CSS variables for dark/light themes.
   - Static HTML: header → controls column (7 collapsible cards: Image, Screen size, Text,
-    Text style, Text box, QR code, Export) → sticky preview "stage" with the `<canvas>`.
-    Each card is `<div class="card" data-card="…">` → `<h2><button class="card-toggle"
-    aria-expanded aria-controls="body-…"><span class="card-title" data-i18n>…</span>
-    <span class="chevron"></span></button></h2>` → `<div class="card-body" id="body-…">`.
+    Text style, Text box, QR code, Export) → sticky preview "stage" with the `<canvas>` →
+    `<footer class="site-footer">`. Each card is `<div class="card" data-card="…">` →
+    `<h2><button class="card-toggle" aria-expanded aria-controls="body-…"><span
+    class="card-title" data-i18n>…</span> <span class="chevron"></span></button></h2>` →
+    `<div class="card-body" id="body-…">`.
+  - **Footer** (`<footer class="site-footer">`, last child of `.wrap`): the author's standard
+    attribution — "Created by [Per Thorsheim](https://thorsheim.net). Feel free to use, copy
+    and whatever. Credit is always nice, not mandatory. Also see
+    [PasswordsCon.org](https://passwordscon.org)." — mirroring the footer at
+    passwordscon.org/mailcheck/. It is **static, not i18n'd** (proper-noun credit; same in
+    every language) and uses theme vars (`--muted` text, `--accent` links, `--line` divider).
+    Below it a `.site-version` line (`Version YYYY-Month-DD — changelog`) links to the repo's
+    GitHub commit history as the changelog; **bump that date string when you ship a change.**
   - **First `<script>`** — the bundled QR encoder (qrcode-generator v1.4.4, Kazuhiko
     Arase, MIT). Inlined verbatim and exposed as `window.qrcode`. Don't hand-edit it; to
     update, re-fetch the upstream file and re-splice (see "QR encoder" below).
