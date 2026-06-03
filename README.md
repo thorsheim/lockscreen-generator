@@ -24,8 +24,9 @@ Open `index.html` in any modern browser. Either:
 
 ## How to make a lockscreen
 
-1. **Image** — click the box (or drag a photo in) to upload. Drag on the preview to pan;
-   scroll or pinch to zoom. "Re-center" resets the crop.
+1. **Image** — click the box (or drag a photo in) to upload. On a phone, tap it to pick from
+   your photo library or take a new picture. Drag on the preview to pan; scroll or pinch to
+   zoom. "Re-center" resets the crop.
 2. **Screen size** — pick your phone (generic 9:16 / 9:19.5 / …, common iPhone and Android
    resolutions) or enter a custom width × height.
 3. **Text** — choose **Contact** (name, phone, email, address — blank fields are hidden) or
@@ -50,6 +51,8 @@ details are visible without unlocking.
 - Works fully **offline**. Extra display fonts are pulled from Google Fonts when online; with
   no connection they fall back to built-in fonts and everything else still works.
 - Light and dark themes — toggle in the top-right.
+- Works on phones, including iPhone (Safari and Chrome) — picking a library photo, taking a
+  new one, and iPhone HEIC photos are all supported.
 
 ## Privacy
 

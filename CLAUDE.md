@@ -55,6 +55,11 @@ the photo.
 
 ## Key behaviours
 
+- **Image loading**: `loadFile` loads the picked/dropped file via
+  `URL.createObjectURL(file)` (not `FileReader`/base64 data URLs) into an `Image`, then
+  revokes the object URL in both `onload` and `onerror`. The type guard rejects only an
+  *explicitly* non-`image/` MIME — a blank `file.type` is allowed (see the iOS gotcha). On
+  load it resets `state.view` to `{scale:1, offX:0, offY:0}` and re-renders.
 - **Cover-fit + clamp**: the image always covers the frame (`baseScale` = max ratio).
   `clampView` prevents panning/zooming past the edges, so there are never empty borders.
   Wheel zoom is cursor-anchored; two-finger pinch zooms via the `pointers` Map.
@@ -112,6 +117,13 @@ the photo.
 - **QR encoder is inlined on purpose.** The sibling `word-pin-converter` documents that
   Chrome silently fails to load `file://` scripts from subdirectories. Inlining keeps the
   tool single-file and fully offline. Don't move it to a separate `<script src>`.
+- **iOS image upload uses object URLs, not data URLs.** `loadFile` must load via
+  `URL.createObjectURL(file)`. The earlier `FileReader.readAsDataURL` approach failed
+  *silently* on iPhones: multi-MB camera/library photos (HEIC/JPEG), base64-inflated ~33%,
+  overflow WebKit's data-URL image-decode limit, so `img.onload` never fires. Every iOS
+  browser — including "Chrome" — is WebKit underneath, so this hit all of them. Also, iOS
+  pickers can report a blank `file.type`, so the guard must allow empty types (reject only
+  explicitly non-image MIMEs). Keep both behaviours; don't revert to data URLs.
 - **Web fonts need the network.** The Google Fonts `<link>` (Inter, Poppins, Montserrat,
   Nunito, Oswald, Bebas Neue, Playfair Display) only loads when online; offline, those
   dropdown entries fall back to their generic stacks and the rest of the tool (including QR)
