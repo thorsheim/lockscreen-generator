@@ -11,6 +11,8 @@ Everything runs locally in your browser. **No image is ever uploaded** — there
 
 **[Live demo →](https://thorsheim.github.io/lockscreen-generator/)**
 
+![Lockscreen Generator screenshot](docs/screenshot.png)
+
 ## Use it
 
 Open `index.html` in any modern browser. Either:
