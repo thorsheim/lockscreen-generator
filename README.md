@@ -9,6 +9,8 @@ wallpaper.
 
 Everything runs locally in your browser. **No image is ever uploaded** — there is no server.
 
+**[Live demo →](https://thorsheim.github.io/lockscreen-generator/)**
+
 ## Use it
 
 Open `index.html` in any modern browser. Either:
