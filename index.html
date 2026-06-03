@@ -170,6 +170,10 @@
   .msg.warn { color: var(--warn); }
   .msg.ok { color: var(--accent); }
   .hidden { display: none !important; }
+  .site-footer { margin: 28px 0 8px; padding-top: 16px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 12.5px; line-height: 1.5; text-align: center; }
+  .site-footer a { color: var(--accent); text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -416,6 +420,12 @@
       <div class="hint" data-i18n="hint">Drag to pan · scroll / pinch to zoom</div>
     </div>
   </div>
+
+  <footer class="site-footer">
+    Created by <a href="https://thorsheim.net" target="_blank" rel="noopener">Per Thorsheim</a>.
+    Feel free to use, copy and whatever. Credit is always nice, not mandatory.
+    Also see <a href="https://passwordscon.org" target="_blank" rel="noopener">PasswordsCon.org</a>.
+  </footer>
 </div>
 
 <script>
