@@ -103,7 +103,15 @@ the photo.
   `TextEncoder` so UTF-8 (accents, etc.) encodes correctly. If the payload is empty or too
   long for a QR, a labelled placeholder square is drawn instead (still draggable).
 - **Export**: PNG (lossless) or JPEG (quality slider). Filename is
-  `lockscreen-<W>x<H>.<ext>`. Object URL is revoked after the click.
+  `lockscreen-<W>x<H>.<ext>`. `doExport` renders an offscreen canvas at device
+  resolution, then `toBlob` → object URL. On **desktop** it triggers an `<a download>`
+  click (URL revoked after 1 s). On **iOS/iPadOS** (`isIOS`: matches `iP(hone|od|ad)` in
+  `navigator.platform`/UA, or `MacIntel` + `maxTouchPoints > 1` for iPadOS) an `<a download>`
+  can't reach the photo library, so instead the full-res blob is shown as an `<img>` in the
+  `#saveOverlay` full-screen modal with a "press and hold → Add to Photos" hint
+  (`save_hint`/`save_done` i18n keys). The overlay's object URL lives until it's closed
+  (Done button or backdrop tap → `closeSaveOverlay` clears `src` and revokes), unlike the
+  desktop path's 1 s timer.
 - **Internationalization**: English, Norwegian Bokmål (`nb`), French (`fr`), Spanish (`es`).
   The header is a `<select id="langSelect">` (options built in JS from `LANG_ORDER` /
   `LANG_META`, each showing flag + native name). Its `change` handler calls `applyLang`.

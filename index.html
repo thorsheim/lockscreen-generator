@@ -176,6 +176,26 @@
   .site-footer a:hover { text-decoration: underline; }
   .site-version { margin-top: 6px; font-size: 11.5px; }
   .site-version a { color: var(--muted); }
+  /* Save-to-Photos overlay (iOS long-press) */
+  .save-overlay {
+    position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px; padding: 20px;
+    background: rgba(0,0,0,0.82); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    overflow: auto;
+  }
+  .save-overlay .save-hint {
+    color: #fff; font-size: 14px; line-height: 1.45; text-align: center; max-width: 420px; margin: 0;
+  }
+  .save-overlay img {
+    max-width: min(78vw, 360px); max-height: 64vh; width: auto; height: auto;
+    border-radius: 18px; box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    -webkit-touch-callout: default; touch-action: manipulation;
+  }
+  .save-overlay .save-close {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--line);
+    border-radius: 999px; padding: 9px 20px; font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .save-overlay .save-close:hover { border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -427,8 +447,14 @@
     Created by <a href="https://thorsheim.net" target="_blank" rel="noopener">Per Thorsheim</a>.
     Feel free to use, copy and whatever. Credit is always nice, not mandatory.
     Also see <a href="https://passwordscon.org" target="_blank" rel="noopener">PasswordsCon.org</a>.
-    <div class="site-version"><a href="https://github.com/thorsheim/lockscreen-generator/commits/master" target="_blank" rel="noopener">Version 2026-June-03 — changelog</a></div>
+    <div class="site-version"><a href="https://github.com/thorsheim/lockscreen-generator/commits/master" target="_blank" rel="noopener">Version 2026-June-04 — changelog</a></div>
   </footer>
+</div>
+
+<div class="save-overlay hidden" id="saveOverlay" role="dialog" aria-modal="true" aria-labelledby="saveHint">
+  <p class="save-hint" id="saveHint" data-i18n="save_hint">Press and hold the image, then choose “Add to Photos”.</p>
+  <img id="saveImg" alt="">
+  <button class="save-close" id="saveClose" type="button" data-i18n="save_done">Done</button>
 </div>
 
 <script>
@@ -2793,6 +2819,7 @@ window.qrcode = qrcode;
       qr_toolong: "QR: too long", qr_addinfo: "QR: add info",
       msg_saved: "Saved {dims} {fmt}.", msg_exportfail: "Export failed.",
       msg_pickimage: "Please choose an image file.", msg_readfail: "Could not read that image.",
+      save_hint: "Press and hold the image, then choose “Add to Photos”.", save_done: "Done",
       default_prefix: "If found, please contact"
     },
     nb: {
@@ -2822,6 +2849,7 @@ window.qrcode = qrcode;
       qr_toolong: "QR: for lang", qr_addinfo: "QR: legg til info",
       msg_saved: "Lagret {dims} {fmt}.", msg_exportfail: "Eksport mislyktes.",
       msg_pickimage: "Velg en bildefil.", msg_readfail: "Kunne ikke lese bildet.",
+      save_hint: "Trykk og hold på bildet, og velg «Legg til i Bilder».", save_done: "Ferdig",
       default_prefix: "Hvis funnet, vennligst kontakt"
     },
     fr: {
@@ -2851,6 +2879,7 @@ window.qrcode = qrcode;
       qr_toolong: "QR : trop long", qr_addinfo: "QR : ajoutez des infos",
       msg_saved: "Enregistré {dims} {fmt}.", msg_exportfail: "Échec de l'exportation.",
       msg_pickimage: "Veuillez choisir un fichier image.", msg_readfail: "Impossible de lire cette image.",
+      save_hint: "Appuyez longuement sur l’image, puis choisissez « Ajouter aux photos ».", save_done: "Terminé",
       default_prefix: "En cas de perte, veuillez contacter"
     },
     es: {
@@ -2880,6 +2909,7 @@ window.qrcode = qrcode;
       qr_toolong: "QR: demasiado largo", qr_addinfo: "QR: añade datos",
       msg_saved: "Guardado {dims} {fmt}.", msg_exportfail: "Error al exportar.",
       msg_pickimage: "Elige un archivo de imagen.", msg_readfail: "No se pudo leer la imagen.",
+      save_hint: "Mantén pulsada la imagen y elige «Añadir a Fotos».", save_done: "Hecho",
       default_prefix: "Si lo encuentra, contacte con"
     }
   };
@@ -3561,6 +3591,23 @@ window.qrcode = qrcode;
   });
   $("downloadBtn").addEventListener("click", doExport);
 
+  // iOS/iPadOS can't save a downloaded file to the photo library, but a long-press
+  // on an <img> offers "Add to Photos". Detect iOS (incl. iPadOS posing as Mac).
+  var isIOS = /iP(hone|od|ad)/.test(navigator.platform) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ||
+    /iPhone|iPad|iPod/.test(navigator.userAgent);
+
+  var saveOverlayURL = null;
+  function closeSaveOverlay() {
+    $("saveOverlay").classList.add("hidden");
+    $("saveImg").removeAttribute("src");
+    if (saveOverlayURL) { URL.revokeObjectURL(saveOverlayURL); saveOverlayURL = null; }
+  }
+  $("saveClose").addEventListener("click", closeSaveOverlay);
+  $("saveOverlay").addEventListener("click", function (e) {
+    if (e.target === this) closeSaveOverlay(); // tap backdrop to dismiss
+  });
+
   function doExport() {
     var W = state.format.w, H = state.format.h;
     var off = document.createElement("canvas");
@@ -3574,11 +3621,19 @@ window.qrcode = qrcode;
     off.toBlob(function (blob) {
       if (!blob) { msg("exportMsg", tr("msg_exportfail"), "warn"); return; }
       var url = URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "lockscreen-" + W + "x" + H + "." + ext;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      if (isIOS) {
+        // Show the full-res image so the user can press-and-hold → Add to Photos.
+        if (saveOverlayURL) URL.revokeObjectURL(saveOverlayURL);
+        saveOverlayURL = url;
+        $("saveImg").src = url;
+        $("saveOverlay").classList.remove("hidden");
+      } else {
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "lockscreen-" + W + "x" + H + "." + ext;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      }
       msg("exportMsg", tr("msg_saved").replace("{dims}", W + "×" + H).replace("{fmt}", ext.toUpperCase()), "ok");
     }, type, q);
     render(); // restore preview-scale clamp
